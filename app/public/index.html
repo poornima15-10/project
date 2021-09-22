@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="demo">
+</div>
+<div>
+    <label for="title">title:</label>
+  <input type="text" id="t1" name="title"><br><br>
+  <input type="hidden" id="title" name="title" value="naveen">
+  <label for="description">description:</label>
+  <input type="text" id="d1" name="description"><br><br>
+  <input type="button" value="add">
+</div>
+
+<script>
+function loadDoc() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        let data= JSON.parse(this.responseText)
+        let tabledata="";
+        if(Array.isArray(data)){
+            data.forEach((ele,index)=>{
+                if(index==0){
+                    tabledata=`<tr>`
+                        Object.keys(ele).forEach(eles=>{
+                            tabledata+=`<th>${eles}</th>`
+                        })
+                    tabledata +=`</tr>`  
+                }
+                tabledata+=`<tr>`
+                Object.keys(ele).forEach(eles=>{
+                    tabledata+=`<td>${ele[eles]}</td>`
+                })
+                tabledata +=`</tr>` 
+            })
+        }else{
+
+        }
+        document.getElementById("demo").innerHTML =`<table border=1>${tabledata}</table>`
+      
+    }
+  };
+  xhttp.open("GET", "/api/tutorials", true);
+  xhttp.send();
+}loadDoc()
+
+function add()
+{
+    var data = JSON.stringify({
+  "title": "t1",
+  "description": "d1"
+});
+
+var xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function() {
+  if(this.readyState === 4) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("POST", "localhost:8080/api/tutorials");
+xhr.setRequestHeader("Content-Type", "application/json");
+
+xhr.send(data);
+}loadDoc
+
+</script>
+
+
+</body>
+</html>
