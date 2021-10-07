@@ -1,6 +1,8 @@
+
+
 module.exports = (sequelize, Sequelize) => {
-    const Notes= sequelize.define("note", {
-      userID:
+    const Notes= sequelize.define("notes", {
+      userId:
       {
         type:Sequelize.STRING
       },
@@ -14,6 +16,7 @@ module.exports = (sequelize, Sequelize) => {
       description: {
         type: Sequelize.STRING
       },
+      
     });
   
     return Notes;

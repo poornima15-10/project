@@ -1,25 +1,35 @@
-const dbConfig = require("../config/db.config.js");
+const config = require("../config/db.config.js");
 
 const Sequelize = require("sequelize");
-const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
-  host: dbConfig.HOST,
-  dialect: dbConfig.dialect,
-  operatorsAliases: false,
+const sequelize = new Sequelize(
+  config.DB,
+  config.USER,
+  config.PASSWORD,
+  {
+    host: config.HOST,
+    dialect: config.dialect,
+    operatorsAliases: false,
 
-  pool: {
-    max: dbConfig.pool.max,
-    min: dbConfig.pool.min,
-    acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle
+    pool: {
+      max: config.pool.max,
+      min: config.pool.min,
+      acquire: config.pool.acquire,
+      idle: config.pool.idle
+    }
   }
-});
+);
 
 const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+//db.SEquelize=SEquelize;
 
-db.notes = require("./notes.model.js")(sequelize, Sequelize);
-db.session=require("./session.model.js")(sequelize, Sequelize)
+db.user = require("../models/user.model.js")(sequelize, Sequelize);
+db.session =require("./session.model.js")(sequelize, Sequelize);
+
+
+
+db.ROLES = ["user", "admin", "moderator"];
 
 module.exports = db;

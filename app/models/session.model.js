@@ -1,16 +1,13 @@
+
 module.exports = (sequelize, Sequelize) => {
-    const Session= sequelize.define("sessions", {
-   /* userId:
-    {
-        type:Sequelize.STRING,
-        //forignkey:true
-
-    },*/
-        sessionid:
-     {
-         type:Sequelize.STRING
-     }
+    const Sdb = sequelize.define("sessions", {
+      userid: {
+        type: Sequelize.INTEGER
+      },
+      sessionid: {
+        type: Sequelize.STRING
+      },
     });
-
-    return Session;
-  }
+  
+    return Sdb;
+  };

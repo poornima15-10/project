@@ -1,7 +1,5 @@
 const db = require("../models");
 const Note = db.notes;
-
-const Session1=db.session;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Tutorial
@@ -16,12 +14,13 @@ exports.create = (req, res) => {
 
   // Create a Tutorial
   const tnote = {
-    userID: req.body.userID,
-    Nid: req.body.Nid,
+    userId:req.body.userId,
+    Nid:req.body.Nid,
     title: req.body.title,
     description: req.body.description,
     //published: req.body.published ? req.body.published : false
   };
+
   // Save Tutorial in the database
   Note.create(tnote)
     .then(data => {
@@ -30,38 +29,12 @@ exports.create = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the notes."
+          err.message || "Some error occurred while creating the Tutorial."
       });
     });
 };
 
 
-exports.create = (req, res) => {
-  // Validate request
-  if (!req.body.sessionid) {
-    res.status(400).send({
-      message: "Content can not be empty!"
-    });
-    return;
-  }
-
-  // Create a Tutorial
-  const sessions = {
-  // userId:req.body.userId,
-   sessionid: req.body.sessionid
-  };
-  // Save Tutorial in the database
-  Session1.create(sessions)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while creating the notes."
-      });
-    });
-};
 
 
 
@@ -72,13 +45,13 @@ exports.findAll = (req, res) => {
   const title = req.query.title;
   var condition = title ? { title: { [Op.like]: `%${title}%` } } : null;
 
-  Note.findAll({ where: condition })
+Note.findAll({ where: condition })
     .then(data => {
       res.send(data);
     })
     .catch(err => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving notes."
+        message: err.message || "Some error occurred while retrieving tutorials."
       });
     });
 };
@@ -93,14 +66,15 @@ exports.findOne = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error retrieving notes with id=" + id});
+        message: "Error retrieving notes with id=" + id
+      });
     });
 };
 // Update a Tutorial by the id in the request
 exports.update = (req, res) => {
   const id = req.params.id;
 
-  Note.update(req.body, {
+ Note.update(req.body, {
     where: { id: id }
   })
     .then(num => {
@@ -116,7 +90,7 @@ exports.update = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating notes with id=" + id
+        message: "Error updating Tutorial with id=" + id
       });
     });
 };
@@ -124,7 +98,7 @@ exports.update = (req, res) => {
 // Delete a Tutorial with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
-  Note.destroy({
+Note.destroy({
     where: { id: id }
   })
     .then(num => {
@@ -158,6 +132,19 @@ exports.deleteAll = (req, res) => {
       res.status(500).send({
         message:
           err.message || "Some error occurred while removing all notes."
+      });
+    });
+};
+// Find all published Tutorials
+exports.findAllPublished = (req, res) => {
+  Note.findAll({ where: { published: true } })
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving notes."
       });
     });
 };
