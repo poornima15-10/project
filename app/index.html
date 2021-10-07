@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <h1 align="center">Admin Form</h1>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="demo"><br>
+    </div>
+    <div class="note">
+        <label for="note" >title:</label>
+        <input type="text" id="n1" hidden=true >
+        <label for="username" >description:</label>
+        <input type="text" id="u1"><br><br>
+        <input class="b1" type="button" id='addbut' value="ADD" onclick="add()"><br><br>
+        <input class="b2" type="button" id='editbut' value="UPDATE" onclick="update1()"><br><br>
+        <input class="b3" type="button" id='cancelbut' value="Cancel" onclick="cancel()"><br><br>
+    </div>
+    <div id="delete" style="font-style: italic; color:red; text-align:center;"></div>
+    <div id="update" style="font-style: italic; color:rgb(127, 231, 245); text-align:center;"></div>
+    <div id="addition" style="font-style: italic; color:rgb(135, 207, 107); text-align:center;"></div>
+
+    <script>
+        function cancel() {
+            document.getElementById('addbut').hidden = false;
+            document.getElementById('editbut').hidden = true;
+            document.getElementById('cancelbut').hidden = true;
+            loadDoc()
+        }
+        function loadDoc() {
+            document.getElementById('editbut').hidden = true;
+            document.getElementById('cancelbut').hidden = true;
+            document.getElementById('addbut').hidden = false;
+            document.getElementById("n1").value = '';
+            document.getElementById("u1").value = '';
+            document.getElementById("ids").value = '';
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let data = JSON.parse(this.responseText)
+                    let tabledata = "";
+                    if (Array.isArray(data)) {
+                        data.forEach((ele, index) => {
+                            if (index == 0) {
+                                tabledata = `<tr>`
+                                Object.keys(ele).forEach(eles => {
+                                    tabledata += `<th>${eles}</th>`
+                                })
+                                tabledata += `<th>Status</th></tr>`
+                            }
+                            tabledata += `<tr>`
+                            Object.keys(ele).forEach(eles => {
+                                tabledata += `<td>${ele[eles]}</td>`
+                            })
+                            tabledata += `<td><input type='button' onclick="delete1(${ele.id})" value="Del"><input type='button' onclick="edit(${ele.id})" value="Edit"></td></tr>`
+                        })
+                    } else {
+
+                    }
+                    document.getElementById("demo").innerHTML = `<table class="tstyle">${tabledata}</table>`
+
+                }
+            };
+            xhttp.open("GET", "/api/tutorials", true);
+            xhttp.send();
+        }
+        loadDoc()
+        function edit(id) {
+            document.getElementById('addbut').hidden = true;
+            document.getElementById('editbut').hidden = false;
+            document.getElementById('cancelbut').hidden = false;
+            let xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4 && this.status == 200) {
+                    let data = JSON.parse(this.responseText)
+                    console.log(this.responseText);
+                    document.getElementById("ids").value = data.id;
+                    document.getElementById("n1").value = data.note;
+                    document.getElementById("u1").value = data.username;
+                }
+            });
+
+            xhr.open("GET", `/api/tutorials/${id}`);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.send();
+        }
+        function add() {
+            var n1 = document.getElementById("n1").value;
+            var u1 = document.getElementById("u1").value;
+            if (n1.length > 0 && u1.length > 0) {
+                console.log(n1 + " " + u1);
+                var data = JSON.stringify({
+                    "note": n1,
+                    "username": u1
+                });
+
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+
+                xhr.addEventListener("readystatechange", function () {
+                    if (this.readyState === 4 && this.status == 200) {
+                        console.log(this.responseText);
+                        loadDoc();
+                    };
+                });
+                xhr.open("POST", "/api/tutorials");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(data);
+                document.getElementById("addition").innerHTML = 'Record added successfully';
+
+            }
+        }
+
+        function delete1(id) {
+
+
+            let xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+
+            xhr.addEventListener("readystatechange", function () {
+                if (this.readyState === 4 && this.status == 200) {
+                    console.log(this.responseText);
+                    loadDoc();
+                }
+            });
+
+            xhr.open("DELETE", `/api/tutorials/${id}`);
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            xhr.send();
+            document.getElementById("delete").innerHTML = 'Record deleted successfully';
+
+        }
+
+        function update1() {
+            var id = document.getElementById("ids").value;
+            var n1 = document.getElementById("n1").value;
+            var u1 = document.getElementById("u1").value;
+            if (t1.length > 0 && d1.length > 0) {
+                console.log(n1 + " " + u1);
+                var data = JSON.stringify({
+                    "note": n1,
+                    "username": u1
+                });
+
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+
+                xhr.addEventListener("readystatechange", function () {
+                    if (this.readyState === 4 && this.status == 200) {
+                        console.log(this.responseText);
+                        loadDoc();
+                    }
+                });
+
+                xhr.open("PUT", `/api/tutorials/${id}`);
+                xhr.setRequestHeader("Content-Type", "application/json");
+
+                xhr.send(data);
+                document.getElementById("update").innerHTML = 'Record updated succesfully';
+            }
+        }
+    </script>
+
+
+</body>
+
+</html>
